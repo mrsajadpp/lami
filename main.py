@@ -1,6 +1,7 @@
 import os
 import speech_recognition as sr
 import pyttsx3
+import json  # For saving and loading chat history
 from dotenv import load_dotenv
 import google.generativeai as genai
 
@@ -73,10 +74,22 @@ def generate_with_memory(question, chat_history):
 
     return response.text
 
+# Function to save chat history to a file
+def save_chat_history(chat_history, filename="chat_history.json"):
+    with open(filename, 'w') as file:
+        json.dump(chat_history, file)
+
+# Function to load chat history from a file
+def load_chat_history(filename="chat_history.json"):
+    if os.path.exists(filename):
+        with open(filename, 'r') as file:
+            return json.load(file)
+    return []
+
 # Function to handle voice assistant (Lami)
 def lami_assistant():
     active_conversation = False
-    chat_history = []  # Initialize chat history
+    chat_history = load_chat_history()  # Load chat history from file
 
     while True:
         command = listen_command()
@@ -93,10 +106,11 @@ def lami_assistant():
                     if "bye" in question or "exit" in question:
                         speak_text("Goodbye! I will wait for you to call Lami again.")
                         active_conversation = False
+                        # Save chat history when the conversation ends
+                        save_chat_history(chat_history)
                     else:
                         # Generate response from the model based on question and chat history
                         response = generate_with_memory(question, chat_history)
-                        # print(f"{Colors.GREEN}Lami's Response: {response}{Colors.RESET}")
                         speak_text(response)
 
         # Optional: Handle other commands or actions here if needed
