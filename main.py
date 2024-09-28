@@ -47,19 +47,29 @@ def speak_text(text):
     engine.say(clean)
     engine.runAndWait()
 
-# Function for speech-to-text
+# Modified function for speech-to-text with improved error handling
 async def listen_command():
     recognizer = sr.Recognizer()
     max_attempts = 3
     for attempt in range(max_attempts):
         with sr.Microphone() as source:
             print(f"{Colors.YELLOW}Listening... (Attempt {attempt + 1}/{max_attempts}){Colors.RESET}")
-            recognizer.adjust_for_ambient_noise(source, duration=0.5)  # Adjust for ambient noise
-            audio = recognizer.listen(source, timeout=5, phrase_time_limit=10)  # Add timeout and phrase time limit
+            try:
+                recognizer.adjust_for_ambient_noise(source, duration=0.5)
+                audio = recognizer.listen(source, timeout=5, phrase_time_limit=10)
+            except sr.WaitTimeoutError:
+                if attempt < max_attempts - 1:
+                    print(f"{Colors.BLUE}No speech detected. Let's try again.{Colors.RESET}")
+                    speak_text("I didn't hear anything. Please try again.")
+                    continue
+                else:
+                    print(f"{Colors.RED}No speech detected after {max_attempts} attempts.{Colors.RESET}")
+                    speak_text("I'm having trouble hearing you. Please check your microphone and try again later.")
+                    return "timeout"
 
         try:
             print(f"{Colors.YELLOW}Recognizing...{Colors.RESET}")
-            command = recognizer.recognize_google(audio, language="en-US")  # Specify language
+            command = recognizer.recognize_google(audio, language="en-US")
             print(f"{Colors.CYAN}You said: {command}{Colors.RESET}")
             return command.lower()
         except sr.UnknownValueError:
@@ -98,50 +108,47 @@ def load_chat_history(filename="chat_history.json"):
     if os.path.exists(filename):
         with open(filename, 'r') as file:
             return json.load(file)
-    return []
+    return []  # Return an empty list if file doesn't exist
 
-# Function to handle voice assistant (Lami)
+# Modified function to handle voice assistant (Lami)
 async def lami_assistant():
     active_conversation = False
     chat_history = load_chat_history()
+    
+    # Ensure chat_history is a list
+    if not isinstance(chat_history, list):
+        chat_history = []
 
     while True:
         command = await listen_command()
 
-        # Check if user said "Lami" to start the assistant
+        if command in ["timeout", "not_understood", "error"]:
+            continue
+
         if "lami" in command:
             speak_text("I'm listening. What would you like to ask?")
             active_conversation = True
-            continue  # Skip to the next iteration to get the actual question
+            continue
 
-        # Once "Lami" is called, continue to listen and respond
         if active_conversation:
-            # Check for exit command
             if "bye" in command or "exit" in command or "no thanks" in command:
                 speak_text("Goodbye! I will wait for you to call Lami again.")
                 active_conversation = False
                 save_chat_history(chat_history)
                 continue
 
-            # Generate response using the API
             response = generate_with_chat_history(command, chat_history)
 
-            # If no response is generated, prompt user to ask again
             if not response or response.strip() == "":
                 print(f"{Colors.BLUE}No response generated. Please try asking again.{Colors.RESET}")
                 speak_text("Sorry, I didn't get that. Could you ask again?")
                 continue
             
-            # Clean and print the response text
             clean_response = clean_text(response)
             print(f"{Colors.GREEN}Lami: {clean_response}{Colors.RESET}")
-
-            # Speak the cleaned response
             speak_text(clean_response)
-
         else:
             print(f"{Colors.YELLOW}Say 'Lami' to start a conversation.{Colors.RESET}")
-
 
 # Start Lami assistant
 if __name__ == "__main__":
