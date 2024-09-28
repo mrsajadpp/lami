@@ -106,45 +106,42 @@ async def lami_assistant():
     chat_history = load_chat_history()
 
     while True:
-        command = await listen_command()  # Await the command
+        command = await listen_command()
 
         # Check if user said "Lami" to start the assistant
         if "lami" in command:
             speak_text("I'm listening. What would you like to ask?")
             active_conversation = True
+            continue  # Skip to the next iteration to get the actual question
 
         # Once "Lami" is called, continue to listen and respond
         if active_conversation:
-            question = await listen_command()  # Await the question
-
-            # If the bot didn't understand the speech, do not call the API
-            if question == "not_understood":
-                print(f"{Colors.BLUE}Sorry, I didn't catch that.{Colors.RESET}")
+            # Check for exit command
+            if "bye" in command or "exit" in command or "no thanks" in command:
+                speak_text("Goodbye! I will wait for you to call Lami again.")
+                active_conversation = False
+                save_chat_history(chat_history)
                 continue
 
-            if question:
-                # Check for exit command
-                if "bye" in question or "exit" in question:
-                    speak_text("Goodbye! I will wait for you to call Lami again.")
-                    active_conversation = False
-                    save_chat_history(chat_history)
-                    continue
+            # Generate response using the API
+            response = generate_with_chat_history(command, chat_history)
 
-                # Generate response using the API
-                response = generate_with_chat_history(question, chat_history)
+            # If no response is generated, prompt user to ask again
+            if not response or response.strip() == "":
+                print(f"{Colors.BLUE}No response generated. Please try asking again.{Colors.RESET}")
+                speak_text("Sorry, I didn't get that. Could you ask again?")
+                continue
+            
+            # Clean and print the response text
+            clean_response = clean_text(response)
+            print(f"{Colors.GREEN}Lami: {clean_response}{Colors.RESET}")
 
-                # If no response is generated, prompt user to ask again
-                if not response or response.strip() == "":
-                    print(f"{Colors.BLUE}No response generated. Please try asking again.{Colors.RESET}")
-                    speak_text("Sorry, I didn't get that. Could you ask again?")
-                    continue
-                
-                # Clean and print the response text
-                clean_response = clean_text(response)
-                print(f"{Colors.GREEN}Lami: {clean_response}{Colors.RESET}")
+            # Speak the cleaned response
+            speak_text(clean_response)
 
-                # Speak the cleaned response
-                speak_text(clean_response)
+        else:
+            print(f"{Colors.YELLOW}Say 'Lami' to start a conversation.{Colors.RESET}")
+
 
 # Start Lami assistant
 if __name__ == "__main__":
