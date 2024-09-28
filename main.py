@@ -4,6 +4,7 @@ import pyttsx3
 import json
 from dotenv import load_dotenv
 import google.generativeai as genai
+import asyncio
 
 # Load the .env file
 load_dotenv()
@@ -24,6 +25,7 @@ class Colors:
     GREEN = "\033[32m"
     BLUE = "\033[34m"
     MAGENTA = "\033[35m"
+    RED = "\033[31m"
     RESET = "\033[0m"
 
 # Function to clean text by removing unwanted characters
@@ -37,7 +39,7 @@ def speak_text(text):
     engine.runAndWait()
 
 # Function for speech-to-text
-def listen_command():
+async def listen_command():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         print(f"{Colors.YELLOW}Listening...{Colors.RESET}")
@@ -47,7 +49,7 @@ def listen_command():
             print(f"{Colors.YELLOW}Recognizing...{Colors.RESET}")
             command = recognizer.recognize_google(audio)
             print(f"{Colors.CYAN}You said: {command}{Colors.RESET}")
-            return command.lower()
+            return command.lower()  # No need to await here
         except sr.UnknownValueError:
             return "not_understood"
         except sr.RequestError as e:
@@ -62,8 +64,6 @@ def generate_with_chat_history(question, chat_history):
         response = model.generate_content(formatted_history)
         chat_history.append({"role": "model", "content": response.text})
 
-        # Debugging: Log response text
-        print(f"{Colors.BLUE}Generated Response: {response.text}{Colors.RESET}")
         return response.text
     except Exception as e:
         print(f"{Colors.RED}Error during response generation: {str(e)}{Colors.RESET}")
@@ -82,23 +82,21 @@ def load_chat_history(filename="chat_history.json"):
     return []
 
 # Function to handle voice assistant (Lami)
-def lami_assistant():
+async def lami_assistant():
     active_conversation = False
     chat_history = load_chat_history()
-    lami_called = False
 
     while True:
-        command = listen_command()
+        command = await listen_command()  # Await the command
 
         # Check if user said "Lami" to start the assistant
         if "lami" in command:
             speak_text("I'm listening. What would you like to ask?")
             active_conversation = True
-            lami_called = True
 
         # Once "Lami" is called, continue to listen and respond
         if active_conversation:
-            question = listen_command()
+            question = await listen_command()  # Await the question
 
             # If the bot didn't understand the speech, do not call the API
             if question == "not_understood":
@@ -110,7 +108,6 @@ def lami_assistant():
                 if "bye" in question or "exit" in question:
                     speak_text("Goodbye! I will wait for you to call Lami again.")
                     active_conversation = False
-                    lami_called = False
                     save_chat_history(chat_history)
                     continue
 
@@ -130,10 +127,8 @@ def lami_assistant():
                 # Speak the cleaned response
                 speak_text(clean_response)
 
-        # Optional: Handle other commands or actions here if needed
-
 # Start Lami assistant
 if __name__ == "__main__":
     speak_text("Lami is ready to assist. Say 'Lami' to activate.")
     print(f"{Colors.MAGENTA}Starting Lami Assistant...{Colors.RESET}")
-    lami_assistant()
+    asyncio.run(lami_assistant())  # Run the assistant with asyncio
