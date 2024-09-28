@@ -1,73 +1,58 @@
-{
-    "chat_history": [
-      {
-        "timestamp": "2024-09-28T10:00:00Z",
-        "message": "My name is Muhammed Sajad PP, but you can call me Sajad."
-      },
-      {
-        "timestamp": "2024-09-28T10:05:00Z",
-        "message": "I am a multifaceted professional with experience in backend development, video editing, photography, web design, SEO, and I am currently a machine learning student."
-      },
-      {
-        "timestamp": "2024-09-28T10:10:00Z",
-        "message": "I have skills in programming languages such as JavaScript, TypeScript, Python, C, and C++."
-      },
-      {
-        "timestamp": "2024-09-28T10:15:00Z",
-        "message": "I use tools like Premiere Pro and Photoshop in my work."
-      },
-      {
-        "timestamp": "2024-09-28T10:20:00Z",
-        "message": "I am the founder of Grovix Lab, a startup focused on various tech solutions."
-      },
-      {
-        "timestamp": "2024-09-28T10:25:00Z",
-        "message": "I developed a library management software called 'Katha,' which is published under the MIT license."
-      },
-      {
-        "timestamp": "2024-09-28T10:30:00Z",
-        "message": "Currently, I am working on a library management system named Luminara for NHSS Kolathur."
-      },
-      {
-        "timestamp": "2024-09-28T10:35:00Z",
-        "message": "I run a public Minecraft SMP server for free-to-play players."
-      },
-      {
-        "timestamp": "2024-09-28T10:40:00Z",
-        "message": "I am also developing a bottle recycling product in India to tackle plastic waste."
-      },
-      {
-        "timestamp": "2024-09-28T10:45:00Z",
-        "message": "I have a keen interest in machine learning and robotics, and I am aiming to learn the basics of machine learning to develop a GPT model."
-      },
-      {
-        "timestamp": "2024-09-28T10:50:00Z",
-        "message": "I enjoy writing and am currently working on a story titled 'Sixth Myth,' which focuses on college friends and their adventures."
-      },
-      {
-        "timestamp": "2024-09-28T10:55:00Z",
-        "message": "I have started a coding YouTube channel to share my knowledge and skills."
-      },
-      {
-        "timestamp": "2024-09-28T11:00:00Z",
-        "message": "I am actively involved in community engagement, organizing workshops like 'Webix v1.0: From Web Designing to Web Development.'"
-      },
-      {
-        "timestamp": "2024-09-28T11:05:00Z",
-        "message": "Additionally, I participate in social initiatives, such as donation drives for disaster relief."
-      },
-      {
-        "timestamp": "2024-09-28T11:10:00Z",
-        "message": "I am based in Kerala and am enthusiastic about digital marketing and branding, particularly through HAP Media."
-      },
-      {
-        "timestamp": "2024-09-28T11:15:00Z",
-        "message": "I actively contribute to the Node.js community with npm packages."
-      },
-      {
-        "timestamp": "2024-09-28T11:20:00Z",
-        "message": "I enjoy potato fries."
-      }
-    ]
+[
+  {
+      "role": "user",
+      "content": "My name is Muhammed Sajad PP, but you can call me Sajad."
+  },
+  {
+      "role": "model",
+      "content": "Nice to meet you, Sajad! How can I assist you today?"
+  },
+  {
+      "role": "user",
+      "content": "Can you tell me about my professional background?"
+  },
+  {
+      "role": "model",
+      "content": "You are a multifaceted professional with experience in backend development, video editing, photography, web design, SEO, and you're currently studying machine learning."
+  },
+  {
+      "role": "user",
+      "content": "What programming skills do I have?"
+  },
+  {
+      "role": "model",
+      "content": "You have skills in JavaScript, TypeScript, Python, C, and C++. You also use tools like Premiere Pro and Photoshop."
+  },
+  {
+      "role": "user",
+      "content": "What projects have I worked on?"
+  },
+  {
+      "role": "model",
+      "content": "You've developed a library management software called 'Katha,' and you're currently working on another system named Luminara for NHSS Kolathur. Additionally, you run a public Minecraft SMP server."
+  },
+  {
+      "role": "user",
+      "content": "Can you tell me about my interests?"
+  },
+  {
+      "role": "model",
+      "content": "You're interested in machine learning and robotics, and you're working on developing a GPT model. You also enjoy writing stories, like 'Sixth Myth,' and are involved in community initiatives."
+  },
+  {
+      "role": "user",
+      "content": "What do I do for fun?"
+  },
+  {
+      "role": "model",
+      "content": "You enjoy coding, video editing, and you have a fondness for potato fries!"
+  },
+  {
+      "role": "user",
+      "content": "How do I engage with my community?"
+  },
+  {
+      "role": "model",
+      "content": "You're actively involved in organizing workshops, such as 'Webix v1.0: From Web Designing to Web Development,' and you participate in social initiatives like donation drives for disaster relief."
   }
-  
+]
