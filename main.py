@@ -50,19 +50,29 @@ def speak_text(text):
 # Function for speech-to-text
 async def listen_command():
     recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        print(f"{Colors.YELLOW}Listening...{Colors.RESET}")
-        audio = recognizer.listen(source)
+    max_attempts = 3
+    for attempt in range(max_attempts):
+        with sr.Microphone() as source:
+            print(f"{Colors.YELLOW}Listening... (Attempt {attempt + 1}/{max_attempts}){Colors.RESET}")
+            recognizer.adjust_for_ambient_noise(source, duration=0.5)  # Adjust for ambient noise
+            audio = recognizer.listen(source, timeout=5, phrase_time_limit=10)  # Add timeout and phrase time limit
 
         try:
             print(f"{Colors.YELLOW}Recognizing...{Colors.RESET}")
-            command = recognizer.recognize_google(audio)
+            command = recognizer.recognize_google(audio, language="en-US")  # Specify language
             print(f"{Colors.CYAN}You said: {command}{Colors.RESET}")
-            return command.lower()  # No need to await here
+            return command.lower()
         except sr.UnknownValueError:
-            return "not_understood"
+            if attempt < max_attempts - 1:
+                print(f"{Colors.BLUE}Sorry, I didn't catch that. Let's try again.{Colors.RESET}")
+                speak_text("I didn't catch that. Please try again.")
+            else:
+                print(f"{Colors.RED}Failed to recognize speech after {max_attempts} attempts.{Colors.RESET}")
+                speak_text("I'm having trouble understanding. Please try again later or check your microphone.")
+                return "not_understood"
         except sr.RequestError as e:
-            speak_text("Could not request results, please check your network.")
+            print(f"{Colors.RED}Could not request results; {e}{Colors.RESET}")
+            speak_text("There was an error with the speech recognition service. Please check your network connection.")
             return "error"
 
 # Function to generate response from the model using chat history
