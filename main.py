@@ -15,6 +15,15 @@ genai.configure(api_key=os.getenv('API_KEY'))
 # Initialize text-to-speech engine
 engine = pyttsx3.init()
 
+# List available voices and set a female voice
+voices = engine.getProperty('voices')
+# Print available voices (optional for your reference)
+for i, voice in enumerate(voices):
+    print(f"Voice {i}: {voice.name} - {voice.languages}")
+    
+# Set the female voice (you may need to adjust the index based on your system's voices)
+engine.setProperty('voice', voices[1].id)  # Change the index as needed
+
 # Initialize Google Gemini Model
 model = genai.GenerativeModel("gemini-1.5-flash")
 
